@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>CreateLINE</title>
+    <style>
+        #output li {
+            background:whitesmoke;
+        }
+    </style>
+</head>
+<header>
+    <h1><i class="fa fa-users "></i> 514INE <i class="fa fa-users "></i></h1>
+</header>
+
+<body>
+    <div class="panel-default">
+        <div class="panel-heading">
+            <div id="scroller" class="panel-body">
+                <!-- 出力 -->
+                    <ul id="output"></ul>
+                <!-- 入力 -->
+                    <ul id="messages"></ul>
+            </div>
+            <ul>
+                <div class="panel-footer">
+                    <input type="text" class="form-control" id="name" placeholder="ユーザー名を入力してください">
+                </div>
+                <div class="panel-footer">
+                    <input type="text" class="form-control" id="message" placeholder="メッセージ内容を入力してください">
+                </div>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script>
+    var firebaseConfig = {
+        apiKey: "",
+        authDomain: "prodchat-54775.firebaseapp.com",
+        projectId: "prodchat-54775",
+        storageBucket: "prodchat-54775.appspot.com",
+        messagingSenderId: "892971288041",
+        appId: "1:892971288041:web:4cbc1ede1369d0be1c7778"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    // データベースと接続する
+    var db = firebase.firestore().collection('20210605-prodchat');
+    // 入力値の取得
+    // var InputName = $('#name').get();
+    // console.log(InputName);
+
+    // 日時をいい感じの形式にする関数
+    function convertFromFirestoreTimestampToDatetime(timestamp) {
+        const _d = timestamp ? new Date(timestamp * 1000) : new Date();
+        const Y = _d.getFullYear();
+        const m = (_d.getMonth() + 1).toString().padStart(2, '0');
+        const d = _d.getDate().toString().padStart(2, '0');
+        const H = _d.getHours().toString().padStart(2, '0');
+        const i = _d.getMinutes().toString().padStart(2, '0');
+        const s = _d.getSeconds().toString().padStart(2, '0');
+    return `${Y}/${m}/${d} ${H}:${i}:${s}`;
+    }
+
+
+    // ENTERキーを押した時に発動する
+    $('#message').on('keydown', function (e) {
+        if (e.keyCode == 13) {
+            //フォームに入力された情報
+            const data = {
+                name: $('#name').val(),
+                text: $('#message').val(),
+                time: firebase.firestore.FieldValue.serverTimestamp(),
+            };
+            //データベースに保存する
+            db.add(data);
+            $('#message').val('');
+        }
+    });
+
+
+    // 受信処理の記述
+    // onSnapshotでcloud firestoreのデータ変更時に実行される!
+    db.orderBy('time', 'desc').onSnapshot(function (querySnapshot) {
+        // querySnapshot.docs;にcloud firestoreのデータが配列形式で入る
+        const dataArray = [];
+        // 必要なデータだけが入った新しい配列を作成
+        querySnapshot.docs.forEach(function (doc) {
+            const data = {
+                id: doc.id,
+                data: doc.data(),
+            };
+            dataArray.push(data);
+        });
+
+        console.log(dataArray);
+
+        const tagArray = [];
+
+        // console.log(dataArray[0].data.name)
+
+        dataArray.forEach(function (data) {
+            // if(InputName){
+                console.log("if")
+                tagArray.push(`
+                    <div id=${data.id}>
+                        <p class='sender_name me' >${data.data.name}</p>
+                        <p class='sender_name me_time'>${convertFromFirestoreTimestampToDatetime(data.data.time.seconds)}</p>
+                        <p class='right_balloon'>${data.data.text}</p></br>
+                    </div>
+                `)
+            // }else{
+            //     console.log("else ")
+            //     tagArray.push(`
+            //         <div id=${data.id}>
+            //             <p class='sender_name'>${data.data.name}</p>
+            //             <p class='sender_name time'>${convertFromFirestoreTimestampToDatetime(data.data.time.seconds)}</p>
+            //             <p class='left_balloon'>${data.data.text}</p></br>
+            //         </div>
+            //     `)
+            // }
+        })
+        $('#output').html(tagArray);
+    });
+    </script>
+</body>
+</html>

@@ -39,15 +39,19 @@
 <script>
   // Your web app's Firebase configuration
   var firebaseConfig = {
-
-
-
-  };
+      apiKey: "AIzaSyA_-RUbVmUMiqWNt7IMO0HdRnqNv_9I81M",
+      authDomain: "chatapp05-5a5a9.firebaseapp.com",
+      projectId: "chatapp05-5a5a9",
+      storageBucket: "chatapp05-5a5a9.appspot.com",
+      messagingSenderId: "155742068829",
+      appId: "1:155742068829:web:3118c92ca7462cd2172db4"
+    };
 
 
   firebase.initializeApp(firebaseConfig);
 
   var db = firebase.firestore().collection('chat05');
+  // console.log(db)
 
     // 日時をいい感じの形式にする関数
     function convertFromFirestoreTimestampToDatetime(timestamp) {
@@ -72,12 +76,13 @@
       $('#text').val('');
   });
 
+
   // 受信処理の記述
     // onSnapshotでcloud firestoreのデータ変更時に実行される!
     db.orderBy('time', 'desc').onSnapshot(function (querySnapshot) {
     // querySnapshot.docs;にcloud firestoreのデータが配列形式で入る
     const dataArray = [];
-    // 必要なデータだけが入った新しい配列を作成 
+    // 必要なデータだけが入った新しい配列を作成
     querySnapshot.docs.forEach(function (doc) {
         const data = {
           id: doc.id,
