@@ -3,7 +3,6 @@
 ## chat > prod
 
 - prod.html
-- prod.js
 - style.css
 
 ## a. 概要(どんなものか，どうやって使うか，など)
