@@ -81,8 +81,10 @@ main{
 }
 
 .sender_name.me{
+    margin-bottom: -5px;
     float: right;
-    padding: 0 20px 0 0;
+    /* padding: 0 20px 0 0; */
+    padding: 0 0 0 20px;
 }
 
 .sender_name.me_time{

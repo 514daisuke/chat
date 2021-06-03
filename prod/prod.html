@@ -47,7 +47,7 @@
 
     <script>
     var firebaseConfig = {
-        apiKey: "",
+        apiKey: "AIzaSyA9jXq1si9AMQxjrq6KKfIQt3-g0Uxp1uY",
         authDomain: "prodchat-54775.firebaseapp.com",
         projectId: "prodchat-54775",
         storageBucket: "prodchat-54775.appspot.com",
@@ -58,9 +58,17 @@
     firebase.initializeApp(firebaseConfig);
     // データベースと接続する
     var db = firebase.firestore().collection('20210605-prodchat');
-    // 入力値の取得
-    // var InputName = $('#name').get();
-    // console.log(InputName);
+    console.log(db);
+
+    // // 入力値の取得
+    // var InputName1 = $('#name').val();
+    // var InputName2 = $('#name').get();
+    // console.log("InputName1データ");
+    // console.log(InputName1);
+    // console.log("InputName2データ");
+    // console.log(InputName2[0]);
+    // console.log("InputName2.idデータ");
+    // console.log(InputName2[0].id);
 
     // 日時をいい感じの形式にする関数
     function convertFromFirestoreTimestampToDatetime(timestamp) {
@@ -90,7 +98,6 @@
         }
     });
 
-
     // 受信処理の記述
     // onSnapshotでcloud firestoreのデータ変更時に実行される!
     db.orderBy('time', 'desc').onSnapshot(function (querySnapshot) {
@@ -105,35 +112,25 @@
             dataArray.push(data);
         });
 
+        console.log("dataArray");
         console.log(dataArray);
 
         const tagArray = [];
 
-        // console.log(dataArray[0].data.name)
+        console.log(dataArray[0].data.name)
 
         dataArray.forEach(function (data) {
-            // if(InputName){
-                console.log("if")
+                console.log("if文")
                 tagArray.push(`
                     <div id=${data.id}>
                         <p class='sender_name me' >${data.data.name}</p>
-                        <p class='sender_name me_time'>${convertFromFirestoreTimestampToDatetime(data.data.time.seconds)}</p>
                         <p class='right_balloon'>${data.data.text}</p></br>
                     </div>
                 `)
-            // }else{
-            //     console.log("else ")
-            //     tagArray.push(`
-            //         <div id=${data.id}>
-            //             <p class='sender_name'>${data.data.name}</p>
-            //             <p class='sender_name time'>${convertFromFirestoreTimestampToDatetime(data.data.time.seconds)}</p>
-            //             <p class='left_balloon'>${data.data.text}</p></br>
-            //         </div>
-            //     `)
-            // }
         })
         $('#output').html(tagArray);
     });
+
     </script>
 </body>
 </html>
